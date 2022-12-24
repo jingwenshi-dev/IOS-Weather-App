@@ -10,9 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var loctionManager = LocationDataManager()
     
+    var weather = WeatherManager()
+    
     var body: some View {
         Text("Test Test").onAppear {
             loctionManager.isSystemLocationServiceEnabled()
+            weather.weatherApiCall(latitude: loctionManager.location?.latitude ?? 1, longitude: loctionManager.location?.longitude ?? 1)
         }
     }
 }

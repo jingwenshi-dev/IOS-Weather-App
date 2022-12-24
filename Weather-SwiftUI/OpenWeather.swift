@@ -11,9 +11,13 @@ import CoreLocation
 class WeatherManager {
     
     func weatherApiCall(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        let apiKey = "???"
         let numDays = 7
-        guard let URL = URL(string: "api.openweathermap.org/data/2.5/forecast/daily?lat=\(latitude)&lon=\(longitude)&cnt=\(numDays)&appid=\(apiKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
+        
+        guard let APIKey = Bundle.main.object(forInfoDictionaryKey: "OpenWeather API Key") as? String else {
+            fatalError("OpenWeather API Key does not exist.\nPlease add your API key as <value> to Info.plist with <key: 'OpenWeather API Key'> ")
+        }
+
+        guard let URL = URL(string: "api.openweathermap.org/data/2.5/forecast/daily?lat=\(latitude)&lon=\(longitude)&cnt=\(numDays)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
         
         let urlCall = URLRequest(url: URL)
     }
