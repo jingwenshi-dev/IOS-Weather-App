@@ -8,18 +8,149 @@
 import Foundation
 import CoreLocation
 
-class WeatherManager {
+class WeatherManager: ObservableObject {
+    
+    var weatherData: WeatherData?
+    var observation: NSKeyValueObservation?
+    var apiProgress: Double
+    
+    init(weatherData: WeatherData? = nil, observation: NSKeyValueObservation? = nil, apiProgress: Double) {
+        self.weatherData = weatherData
+        self.observation = observation
+        self.apiProgress = apiProgress
+    }
     
     func weatherApiCall(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
-        let numDays = 7
         
         guard let APIKey = Bundle.main.object(forInfoDictionaryKey: "OpenWeather API Key") as? String else {
-            fatalError("OpenWeather API Key does not exist.\nPlease add your API key as <value> to Info.plist with <key: 'OpenWeather API Key'> ")
+            fatalError("<OpenWeather API Key> does not exist in Info.plist.\nPlease add <value = YOUR API KEY> with <key = 'OpenWeather API Key'> manually.")
+        }
+        
+        guard let URL = URL(string: "api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
+        
+        var dataTask = URLSession.shared.dataTask(with: URL) { rawData, urlResponse, taskError in
+            
+            // If request failed
+            if let taskError = taskError {
+                fatalError(taskError.localizedDescription)
+            }
+            
+            // If no data obtained, return nil
+            guard let rawData = rawData else { return }
+            
+            // Check if data gained successfully
+            let httpResponse = urlResponse as? HTTPURLResponse
+            if httpResponse?.statusCode != 200 {
+                fatalError("Weather data fetching failed")
+            }
+            
+            // Pass weatherData to outerscope when data is fetched
+            do {
+                let fetchedData = try JSONDecoder().decode(WeatherData.self, from: rawData)
+                DispatchQueue.main.async {
+                    self.weatherData = fetchedData
+                }
+            } catch {
+                fatalError("JSONDecoder error: \(error)")
+            }
+        }
+        
+        observation = dataTask.progress.observe(\.fractionCompleted) { observationProgress, _ in
+            DispatchQueue.main.async {
+                self.apiProgress = observationProgress.fractionCompleted
+            }
         }
 
-        guard let URL = URL(string: "api.openweathermap.org/data/2.5/forecast/daily?lat=\(latitude)&lon=\(longitude)&cnt=\(numDays)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
+        dataTask.resume()
+
+    }
+}
+
+struct WeatherData: Decodable {
+    
+    var cod: String
+    var message: Int
+    var cnt: Int
+    var list: [list]
+    var city: [city]
+    
+    struct list: Decodable {
+        var dt: Int
+        var main: main
+        var weather: [weather]
+        var clouds: clouds
+        var wind: wind
+        var visibility: Int
+        var pop: Float
+        var rain: rain
+        var snow: snow
+        var sys: sys
+        var dt_txt: String
         
-        let urlCall = URLRequest(url: URL)
+        struct main: Decodable {
+            var temp: Float
+            var feels_like: Float
+            var temp_min: Float
+            var temp_max: Float
+            var pressure: Float
+            var sea_level: Float
+            var grnd_level: Float
+            var humidity: Float
+            var temp_kf: Float
+        }
+        
+        struct weather: Decodable {
+            var id: Int
+            var main: String
+            var description: String
+            var icon: String
+        }
+        
+        struct clouds: Decodable {
+            var all: Int
+        }
+        
+        struct wind: Decodable {
+            var speed: Float
+            var deg: Int
+            var gust: Float
+        }
+        
+        struct rain: Decodable {
+            // Convert json parameter 3h to three_h
+            var three_h: String
+            private enum CodingKeys: String, CodingKey, Decodable {
+                case three_h = "3h"
+            }
+        }
+        
+        struct snow: Decodable {
+            // Convert json parameter 3h to three_h
+            var three_h: String
+            private enum CodingKeys: String, CodingKey, Decodable {
+                case three_h = "3h"
+            }
+        }
+        
+        struct sys: Decodable {
+            var pod: String
+        }
+    }
+    
+    struct city: Decodable {
+        var id: Int
+        var name: String
+        var coord: coord
+        var country: String
+        var population: Int
+        var timezone: Int
+        var sunrise: Int
+        var sunset: Int
+        
+        struct coord: Decodable {
+            var lat: Float
+            var lon: Float
+        }
     }
     
 }

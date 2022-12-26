@@ -8,15 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var loctionManager = LocationDataManager()
+
+    @State var observation: NSKeyValueObservation?
+    @State var weatherData: WeatherData?
     
-    var weather = WeatherManager()
+    @State var apiProgress: Double = 0
+    let apiTotal: Double = 1
+
+    @StateObject private var loctionManager = LocationDataManager()
+    @StateObject private var weatherManager = WeatherManager(weatherData: weatherData, observation: observation, apiProgress: apiProgress)
     
     var body: some View {
-        Text("Test Test").onAppear {
-            loctionManager.isSystemLocationServiceEnabled()
-            weather.weatherApiCall(latitude: loctionManager.location?.latitude ?? 1, longitude: loctionManager.location?.longitude ?? 1)
+        
+        if loctionManager.location == nil {
+            LoadingView(apiProgress: apiProgress, apiTotal: apiTotal)
+                .task{loctionManager.isSystemLocationServiceEnabled()
+                }
         }
+        
+        
     }
 }
 

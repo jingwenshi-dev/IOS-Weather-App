@@ -14,8 +14,8 @@ internal class LocationDataManager: NSObject, ObservableObject, CLLocationManage
     // Location-related properties and delegate methods.
     private var locationManager: CLLocationManager?
     var locationService: Bool?
-    var loading: Bool?
-    var location: CLLocationCoordinate2D?
+    @Published var loading: Bool?
+    @Published var location: CLLocationCoordinate2D?
 
     internal func isSystemLocationServiceEnabled() {
         if CLLocationManager.locationServicesEnabled() {

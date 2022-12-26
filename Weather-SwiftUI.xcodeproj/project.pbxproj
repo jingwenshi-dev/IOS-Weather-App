@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8330E9D92956B6BF0089B4B3 /* OpenWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8330E9D82956B6BE0089B4B3 /* OpenWeather.swift */; };
+		8330E9DB29592B2E0089B4B3 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8330E9DA29592B2E0089B4B3 /* LoadingView.swift */; };
 		8397BF1129564DA20066D2F4 /* Weather_SwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8397BF1029564DA20066D2F4 /* Weather_SwiftUIApp.swift */; };
 		8397BF1329564DA20066D2F4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8397BF1229564DA20066D2F4 /* ContentView.swift */; };
 		8397BF1529564DA30066D2F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8397BF1429564DA30066D2F4 /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		8330E9D72956AA130089B4B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8330E9D82956B6BE0089B4B3 /* OpenWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWeather.swift; sourceTree = "<group>"; };
+		8330E9DA29592B2E0089B4B3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		8397BF0D29564DA20066D2F4 /* Weather-SwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Weather-SwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8397BF1029564DA20066D2F4 /* Weather_SwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather_SwiftUIApp.swift; sourceTree = "<group>"; };
 		8397BF1229564DA20066D2F4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				8330E9D72956AA130089B4B3 /* Info.plist */,
+				8330E9DA29592B2E0089B4B3 /* LoadingView.swift */,
 				8397BF1029564DA20066D2F4 /* Weather_SwiftUIApp.swift */,
 				8397BF1229564DA20066D2F4 /* ContentView.swift */,
 				8397BF3C295654E80066D2F4 /* Location.swift */,
@@ -268,6 +271,7 @@
 				8397BF1329564DA20066D2F4 /* ContentView.swift in Sources */,
 				8397BF3D295654E80066D2F4 /* Location.swift in Sources */,
 				8330E9D92956B6BF0089B4B3 /* OpenWeather.swift in Sources */,
+				8330E9DB29592B2E0089B4B3 /* LoadingView.swift in Sources */,
 				8397BF1129564DA20066D2F4 /* Weather_SwiftUIApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
