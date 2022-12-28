@@ -9,8 +9,7 @@ import SwiftUI
 
 struct LoadingView: View {
     
-    var apiProgress: Double
-    let apiTotal: Double
+    @EnvironmentObject var weatherManager: WeatherManager
     
     var body: some View {
         ZStack{
@@ -18,8 +17,7 @@ struct LoadingView: View {
             
             VStack{
                 Text("- -").font(.system(size: 80)).bold().foregroundColor(.white)
-                
-                ProgressView(value: apiProgress, total: apiTotal).progressViewStyle(LinearProgressViewStyle())
+                ProgressView(value: weatherManager.apiProgress, total: weatherManager.apiTotal).progressViewStyle(LinearProgressViewStyle())
             }
         }
         
@@ -28,6 +26,6 @@ struct LoadingView: View {
 
 struct LoadingView_Previews: PreviewProvider {
     static var previews: some View {
-        LoadingView(apiProgress: 0.1, apiTotal: 1)
+        LoadingView()
     }
 }

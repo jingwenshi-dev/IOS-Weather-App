@@ -14,7 +14,7 @@ internal class LocationDataManager: NSObject, ObservableObject, CLLocationManage
     // Location-related properties and delegate methods.
     private var locationManager: CLLocationManager?
     var locationService: Bool?
-    @Published var loading: Bool?
+    @Published var loaded: Bool = false
     @Published var location: CLLocationCoordinate2D?
 
     internal func isSystemLocationServiceEnabled() {
@@ -26,7 +26,7 @@ internal class LocationDataManager: NSObject, ObservableObject, CLLocationManage
         }
         else {
             self.locationService = false
-        }
+        }        
     }
     
     private func gainLocationAutherationStatus() {
@@ -50,10 +50,10 @@ internal class LocationDataManager: NSObject, ObservableObject, CLLocationManage
         gainLocationAutherationStatus()
         manager.startUpdatingLocation()
     }
-    
+
     internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location: CLLocationCoordinate2D = manager.location?.coordinate else {return}
-        print("locations = \(location.latitude) \(location.longitude)")
+        location = locations.first?.coordinate
+        print("locations = \(String(describing: location?.latitude)) \(String(describing: location?.longitude))")
+        loaded = true
     }
-    
 }

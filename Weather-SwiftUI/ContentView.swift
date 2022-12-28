@@ -8,25 +8,41 @@
 import SwiftUI
 
 struct ContentView: View {
-
-    @State var observation: NSKeyValueObservation?
+    
     @State var weatherData: WeatherData?
     
-    @State var apiProgress: Double = 0
-    let apiTotal: Double = 1
-
-    @StateObject private var loctionManager = LocationDataManager()
-    @StateObject private var weatherManager = WeatherManager(weatherData: weatherData, observation: observation, apiProgress: apiProgress)
+    @StateObject var locationManager = LocationDataManager()
+    @StateObject var weatherManager = WeatherManager()
+    
+    //    @State var apiProgress: Double = 0
+    //    @State var apiTotal: Double = 1
     
     var body: some View {
         
-        if loctionManager.location == nil {
-            LoadingView(apiProgress: apiProgress, apiTotal: apiTotal)
-                .task{loctionManager.isSystemLocationServiceEnabled()
+        ZStack{
+            
+            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            
+            if locationManager.loaded {
+                if weatherData != nil{
+                    WeatherView(weatherManager: weatherManager)
                 }
+                else {
+                    LoadingView().environmentObject(weatherManager).task {
+                        guard let location = locationManager.location else {fatalError("Location data access failure")}
+                        weatherManager.weatherApiCall(latitude: location.latitude, longitude: location.longitude)
+                        print("Accessing Weather Data ... ")
+                    }
+                }
+            }
+            else {
+                if !(locationManager.loaded) {
+                    LoadingView().environmentObject(weatherManager).task{
+                        locationManager.isSystemLocationServiceEnabled()
+                    }
+                }
+            }
         }
-        
-        
     }
 }
 

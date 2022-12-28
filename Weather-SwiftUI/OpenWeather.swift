@@ -10,15 +10,10 @@ import CoreLocation
 
 class WeatherManager: ObservableObject {
     
-    var weatherData: WeatherData?
-    var observation: NSKeyValueObservation?
-    var apiProgress: Double
-    
-    init(weatherData: WeatherData? = nil, observation: NSKeyValueObservation? = nil, apiProgress: Double) {
-        self.weatherData = weatherData
-        self.observation = observation
-        self.apiProgress = apiProgress
-    }
+    @Published var weatherData: WeatherData? = nil
+    @Published var observation: NSKeyValueObservation? = nil
+    @Published internal var apiProgress: Double = 0
+    internal var apiTotal: Double = 1
     
     func weatherApiCall(latitude: CLLocationDegrees, longitude: CLLocationDegrees) {
         
@@ -26,9 +21,11 @@ class WeatherManager: ObservableObject {
             fatalError("<OpenWeather API Key> does not exist in Info.plist.\nPlease add <value = YOUR API KEY> with <key = 'OpenWeather API Key'> manually.")
         }
         
-        guard let URL = URL(string: "api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
+        guard let URL = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
         
-        var dataTask = URLSession.shared.dataTask(with: URL) { rawData, urlResponse, taskError in
+        print(URL)
+        
+        let dataTask = URLSession.shared.dataTask(with: URL) { rawData, urlResponse, taskError in
             
             // If request failed
             if let taskError = taskError {
@@ -58,6 +55,7 @@ class WeatherManager: ObservableObject {
         observation = dataTask.progress.observe(\.fractionCompleted) { observationProgress, _ in
             DispatchQueue.main.async {
                 self.apiProgress = observationProgress.fractionCompleted
+                print(self.apiProgress)
             }
         }
 
@@ -66,15 +64,15 @@ class WeatherManager: ObservableObject {
     }
 }
 
-struct WeatherData: Decodable {
+struct WeatherData: Codable {
     
     var cod: String
     var message: Int
     var cnt: Int
     var list: [list]
-    var city: [city]
+    var city: city
     
-    struct list: Decodable {
+    struct list: Codable {
         var dt: Int
         var main: main
         var weather: [weather]
@@ -82,12 +80,12 @@ struct WeatherData: Decodable {
         var wind: wind
         var visibility: Int
         var pop: Float
-        var rain: rain
-        var snow: snow
+        var rain: rain?
+        var snow: snow?
         var sys: sys
         var dt_txt: String
         
-        struct main: Decodable {
+        struct main: Codable {
             var temp: Float
             var feels_like: Float
             var temp_min: Float
@@ -99,45 +97,45 @@ struct WeatherData: Decodable {
             var temp_kf: Float
         }
         
-        struct weather: Decodable {
+        struct weather: Codable {
             var id: Int
             var main: String
             var description: String
             var icon: String
         }
         
-        struct clouds: Decodable {
+        struct clouds: Codable {
             var all: Int
         }
         
-        struct wind: Decodable {
+        struct wind: Codable {
             var speed: Float
             var deg: Int
             var gust: Float
         }
         
-        struct rain: Decodable {
+        struct rain: Codable {
             // Convert json parameter 3h to three_h
-            var three_h: String
-            private enum CodingKeys: String, CodingKey, Decodable {
+            var three_h: Float
+            enum CodingKeys: String, CodingKey {
                 case three_h = "3h"
             }
         }
         
-        struct snow: Decodable {
+        struct snow: Codable {
             // Convert json parameter 3h to three_h
-            var three_h: String
-            private enum CodingKeys: String, CodingKey, Decodable {
+            var three_h: Float
+             enum CodingKeys: String, CodingKey {
                 case three_h = "3h"
             }
         }
         
-        struct sys: Decodable {
+        struct sys: Codable {
             var pod: String
         }
     }
     
-    struct city: Decodable {
+    struct city: Codable {
         var id: Int
         var name: String
         var coord: coord
@@ -147,7 +145,7 @@ struct WeatherData: Decodable {
         var sunrise: Int
         var sunset: Int
         
-        struct coord: Decodable {
+        struct coord: Codable {
             var lat: Float
             var lon: Float
         }
