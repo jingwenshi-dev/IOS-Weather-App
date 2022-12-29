@@ -13,7 +13,9 @@ struct WeatherView: View {
     
     var body: some View {
 
-        Text("")
+        Text("HI").task {
+            print(weatherData)
+        }
 
     }
 }

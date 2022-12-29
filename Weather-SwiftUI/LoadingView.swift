@@ -18,7 +18,7 @@ struct LoadingView: View {
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
-
+            
             if weatherManager.apiProgress != 0 {
                 ZStack{
                     RoundedRectangle(cornerRadius: 15, style: .circular)
@@ -35,6 +35,14 @@ struct LoadingView: View {
                                 withAnimation {
                                     progress += weatherManager.apiProgress
                                 }
+                            }
+                        }
+                        // Force the LoadingView to display animation by delay setting <weatherManager.loaded> such that
+                        // the change of weatherManager will be detected by the ContentView with a at least 1 second delay.
+                        // Then WeatherView will be called with a delay.
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                weatherManager.loaded = true
                             }
                         }
                 }

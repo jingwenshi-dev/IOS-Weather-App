@@ -10,6 +10,7 @@ import CoreLocation
 
 @MainActor class WeatherManager: ObservableObject {
     
+    @Published var loaded: Bool = false
     @Published var weatherData: WeatherData? = nil
     @Published var observation: NSKeyValueObservation? = nil
     @Published internal var apiProgress: Double = 0

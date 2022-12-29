@@ -19,7 +19,7 @@ struct ContentView: View {
             LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
             
             if locationManager.loaded {
-                if let weatherData = weatherManager.weatherData{
+                if weatherManager.loaded, let weatherData = weatherManager.weatherData{
                     WeatherView(weatherData: weatherData)
                 }
                 else {
