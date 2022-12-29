@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-class WeatherManager: ObservableObject {
+@MainActor class WeatherManager: ObservableObject {
     
     @Published var weatherData: WeatherData? = nil
     @Published var observation: NSKeyValueObservation? = nil
@@ -37,11 +37,11 @@ class WeatherManager: ObservableObject {
             
             // Check if data gained successfully
             let httpResponse = urlResponse as? HTTPURLResponse
-            if httpResponse?.statusCode != 200 {
+            if !(200 <= httpResponse?.statusCode ?? -999 || httpResponse?.statusCode ?? -999 <= 300) {
                 fatalError("Weather data fetching failed")
             }
             
-            // Pass weatherData to outerscope when data is fetched
+            // Set weatherData when data is fetched and decoded
             do {
                 let fetchedData = try JSONDecoder().decode(WeatherData.self, from: rawData)
                 DispatchQueue.main.async {
@@ -55,7 +55,7 @@ class WeatherManager: ObservableObject {
         observation = dataTask.progress.observe(\.fractionCompleted) { observationProgress, _ in
             DispatchQueue.main.async {
                 self.apiProgress = observationProgress.fractionCompleted
-                print(self.apiProgress)
+//                print(self.apiProgress)
             }
         }
 

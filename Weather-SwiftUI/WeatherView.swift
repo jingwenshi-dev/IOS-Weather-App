@@ -9,9 +9,17 @@ import SwiftUI
 
 struct WeatherView: View {
     
-    var weatherManager: WeatherManager
+    var weatherData: WeatherData
     
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+        Text("")
+
     }
 }
+
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        WeatherView()
+//    }
+//}

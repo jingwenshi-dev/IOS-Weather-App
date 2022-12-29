@@ -8,14 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
-    
-    @State var weatherData: WeatherData?
-    
+        
     @StateObject var locationManager = LocationDataManager()
     @StateObject var weatherManager = WeatherManager()
-    
-    //    @State var apiProgress: Double = 0
-    //    @State var apiTotal: Double = 1
     
     var body: some View {
         
@@ -24,8 +19,8 @@ struct ContentView: View {
             LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
             
             if locationManager.loaded {
-                if weatherData != nil{
-                    WeatherView(weatherManager: weatherManager)
+                if let weatherData = weatherManager.weatherData{
+                    WeatherView(weatherData: weatherData)
                 }
                 else {
                     LoadingView().environmentObject(weatherManager).task {

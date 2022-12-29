@@ -53,7 +53,7 @@ internal class LocationDataManager: NSObject, ObservableObject, CLLocationManage
 
     internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         location = locations.first?.coordinate
-        print("locations = \(String(describing: location?.latitude)) \(String(describing: location?.longitude))")
+//        print("locations = \(String(describing: location?.latitude)) \(String(describing: location?.longitude))")
         loaded = true
     }
 }
