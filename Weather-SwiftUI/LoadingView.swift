@@ -10,11 +10,8 @@ import SwiftUI
 struct LoadingView: View {
     
     @EnvironmentObject var weatherManager: WeatherManager
-    
     @State private var progress: Double = 0
-    
-    @State private var showGlass = false
-    
+        
     var body: some View {
         ZStack{
             LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()

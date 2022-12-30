@@ -20,7 +20,7 @@ struct ContentView: View {
             
             if locationManager.loaded {
                 if weatherManager.loaded, let weatherData = weatherManager.weatherData{
-                    WeatherView(weatherData: weatherData)
+                    WeatherView(data: weatherData)
                 }
                 else {
                     LoadingView().environmentObject(weatherManager).task {

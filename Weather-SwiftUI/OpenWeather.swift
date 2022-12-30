@@ -22,7 +22,7 @@ import CoreLocation
             fatalError("<OpenWeather API Key> does not exist in Info.plist.\nPlease add <value = YOUR API KEY> with <key = 'OpenWeather API Key'> manually.")
         }
         
-        guard let URL = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(APIKey)&units=imperial") else {fatalError("OpenWeather API URL Error")}
+        guard let URL = URL(string: "https://api.openweathermap.org/data/2.5/forecast?lat=\(latitude)&lon=\(longitude)&appid=\(APIKey)&units=metric") else {fatalError("OpenWeather API URL Error")}
         
         print(URL)
         
