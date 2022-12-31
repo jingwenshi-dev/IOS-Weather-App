@@ -80,11 +80,25 @@ struct WeatherData: Codable {
         var clouds: clouds
         var wind: wind
         var visibility: Int
-        var pop: Float
+        var prob: Float
         var rain: rain?
         var snow: snow?
         var sys: sys
         var dt_txt: String
+        
+        enum CodingKeys: String, CodingKey {
+            case dt
+            case main
+            case weather
+            case clouds
+            case wind
+            case visibility
+            case prob = "pop"
+            case rain
+            case snow
+            case sys
+            case dt_txt
+        }
         
         struct main: Codable {
             var temp: Float
@@ -126,7 +140,7 @@ struct WeatherData: Codable {
         struct snow: Codable {
             // Convert json parameter 3h to three_h
             var three_h: Float
-             enum CodingKeys: String, CodingKey {
+            enum CodingKeys: String, CodingKey {
                 case three_h = "3h"
             }
         }
