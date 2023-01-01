@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SpriteKit
 
 extension StringProtocol {
     subscript(offset: Int) -> Character { self[index(startIndex, offsetBy: offset)] }
@@ -168,11 +169,21 @@ struct WeatherView: View {
         
         ZStack{
             
-            LinearGradient(gradient: Gradient(colors: [Color.blue, Color.white]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            if data.list[0].weather[0].main == "Rain" {
+                LinearGradient(gradient: Gradient(colors: [Color.gray, Color.clear]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                SpriteView(scene: RainFall(), options: [.allowsTransparency])
+            }
+            else if data.list[0].weather[0].main == "Snow" {
+                LinearGradient(gradient: Gradient(colors: [Color.gray, Color.clear]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                SpriteView(scene: SnowFall(), options: [.allowsTransparency])
+            }
+            else {
+                LinearGradient(gradient: Gradient(colors: [Color.blue, Color.clear]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            }
             
             ScrollView(showsIndicators: false){
                 
-                Spacer().frame(height: 70)
+                Spacer().frame(height: 100)
                 Text(data.city.name).font(.system(size: 30, weight: .medium, design: .default)).foregroundColor(.white)
                 Text("  \(Int(data.list[1].main.temp))\(unit)").font(.system(size: 100, weight: .light, design: .default)).bold().foregroundColor(.white)
                 Text(data.list[1].weather[0].description.capitalized).font(.title3).foregroundColor(.white)
@@ -180,8 +191,8 @@ struct WeatherView: View {
                     Text("H:\(Int(data.list[1].main.temp_max))\(unit)").font(.title3).foregroundColor(.white)
                     Text("L:\(Int(data.list[1].main.temp_min))\(unit)").font(.title3).foregroundColor(.white)
                 }
-                Spacer().frame(height: 70)
-
+                Spacer().frame(height: 50)
+                
                 ZStack {
                     
                     RoundedRectangle(cornerRadius: 20, style: .circular)
@@ -201,7 +212,7 @@ struct WeatherView: View {
                                 // Weather in the next 24h
                                 ForEach(0..<25) {index in
                                     VStack {
-
+                                        
                                         Text(String(data.list[index].dt_txt[11..<13])).foregroundColor(.white).padding(.bottom, 5)
                                         
                                         if data.list[index].weather[0].main == "Thunderstorm" {
@@ -252,7 +263,7 @@ struct WeatherView: View {
                 Spacer().frame(height: 20)
                 
                 ZStack {
-
+                    
                     RoundedRectangle(cornerRadius: 20, style: .circular)
                         .fill(.ultraThinMaterial)
                         .opacity(0.5)
@@ -264,40 +275,66 @@ struct WeatherView: View {
                         
                         if let images = getMainWeatherImages(data: data), let temps = getMinMaxTemp(data: data){
                             
-                                ForEach(0..<5) {index in
-                                    Divider().overlay(.white)
-                                    
-                                    HStack {
-                                        if index == 0 {
-                                            Text("Today").font(.headline).foregroundColor(.white).frame(width: 55, alignment: .leading)
-                                        } else {
-                                            if let weekDay = getDayOfWeek(data.list[index*8].dt_txt) {
-                                                Text(String(weekDay[0..<3])).font(.headline).foregroundColor(.white).frame(width: 55, alignment: .leading)
-                                            }
+                            ForEach(0..<5) {index in
+                                Divider().overlay(.white)
+                                
+                                HStack {
+                                    if index == 0 {
+                                        Text("Today").font(.headline).foregroundColor(.white).frame(width: 55, alignment: .leading)
+                                    } else {
+                                        if let weekDay = getDayOfWeek(data.list[index*8].dt_txt) {
+                                            Text(String(weekDay[0..<3])).font(.headline).foregroundColor(.white).frame(width: 55, alignment: .leading)
                                         }
-                                        
-                                        if images[index] == "sun.min.fill" {
-                                            Image(systemName: images[index]).symbolRenderingMode(.multicolor).foregroundColor(Color(hue: 0.17, saturation: 1.0, brightness: 1.0)).frame(width: 40)
-                                        } else {
-                                            Image(systemName: images[index]).symbolRenderingMode(.multicolor).frame(width: 40)
-                                        }
-                                        
-                                        Text("\(Image(systemName: "thermometer.medium").symbolRenderingMode(.multicolor)) \(temps[index][1])\(unit) ~ \(temps[index][0])\(unit)").foregroundColor(Color.white).frame(width: 100, alignment: .leading).padding(.leading, 15)
-                                        
-                                        Text("\(Image(systemName: "wind").symbolRenderingMode(.multicolor)) \(Int(data.list[index * 8].wind.speed)) m/s").frame(alignment: .leading)
                                     }
+                                    
+                                    if images[index] == "sun.min.fill" {
+                                        Image(systemName: images[index]).symbolRenderingMode(.multicolor).foregroundColor(Color(hue: 0.17, saturation: 1.0, brightness: 1.0)).frame(width: 40)
+                                    } else {
+                                        Image(systemName: images[index]).symbolRenderingMode(.multicolor).frame(width: 40)
+                                    }
+                                    
+                                    Text("\(Image(systemName: "thermometer.medium").symbolRenderingMode(.multicolor)) \(temps[index][1])\(unit) ~ \(temps[index][0])\(unit)").foregroundColor(Color.white).frame(width: 100, alignment: .leading).padding(.leading, 15)
+                                    
+                                    Text("\(Image(systemName: "wind").symbolRenderingMode(.multicolor)) \(Int(data.list[index * 8].wind.speed)) m/s").frame(alignment: .leading)
                                 }
+                            }
                         }
                     }.frame(maxWidth: 325)
                 }
                 
-                Spacer().frame(height: 60)
-
-            }
+                Spacer().frame(height: 100)
+                
+            }.coordinateSpace(name: "SCROLL").ignoresSafeArea(.container, edges: .vertical)
+            
         }
+    }
+    
+  
+}
+
+class RainFall: SKScene {
+    override func sceneDidLoad() {
+        size = UIScreen.main.bounds.size
+        scaleMode = .resizeFill
+        anchorPoint = CGPoint(x: 0.5, y: 1)
+        backgroundColor = .clear
+        let node = SKEmitterNode(fileNamed: "Rain.sks")!
+        addChild(node)
+        node.particlePositionRange.dx = UIScreen.main.bounds.width
     }
 }
 
+class SnowFall: SKScene {
+    override func sceneDidLoad() {
+        size = UIScreen.main.bounds.size
+        scaleMode = .resizeFill
+        anchorPoint = CGPoint(x: 0.5, y: 1)
+        backgroundColor = .clear
+        let node = SKEmitterNode(fileNamed: "Snow.sks")!
+        addChild(node)
+        node.particlePositionRange.dx = UIScreen.main.bounds.width
+    }
+}
 
 struct WeatherView_Previews: PreviewProvider {
     static var previews: some View {
